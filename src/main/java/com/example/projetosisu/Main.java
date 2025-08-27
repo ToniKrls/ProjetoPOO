@@ -19,11 +19,11 @@ public class Main extends Application {
 
         // Carregar dados
         SisuService service = new SisuService();
-        List<Curso> cursos = service.carregarCursos("dados.csv");
+        List<Curso> cursos = service.carregarCursos();
 
         // Gerar gráfico
         MainController controller = new MainController();
-        controller.gerarGraficoVagas(barChart, cursos);
+        controller.gerarGraficoMedias(barChart, cursos);
 
         // Layout
         VBox root = new VBox(barChart);

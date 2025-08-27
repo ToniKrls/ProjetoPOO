@@ -2,22 +2,19 @@ package com.example.projetosisu;
 
 public class Nota {
     private int ano;
-    private double minima;
+    private String demanda;   // Ampla concorrência, cotas, etc.
     private double media;
-    private double ampla;
-    private double cotas;
+    private int colocacao;
 
-    public Nota(int ano, double minima, double media, double ampla, double cotas) {
+    public Nota(int ano, String demanda, double media, int colocacao) {
         this.ano = ano;
-        this.minima = minima;
+        this.demanda = demanda;
         this.media = media;
-        this.ampla = ampla;
-        this.cotas = cotas;
+        this.colocacao = colocacao;
     }
 
     public int getAno() { return ano; }
-    public double getMinima() { return minima; }
+    public String getDemanda() { return demanda; }
     public double getMedia() { return media; }
-    public double getAmpla() { return ampla; }
-    public double getCotas() { return cotas; }
+    public int getColocacao() { return colocacao; }
 }
