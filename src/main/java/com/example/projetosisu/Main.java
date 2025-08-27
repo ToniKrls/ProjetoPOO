@@ -1,9 +1,10 @@
 package com.example.projetosisu;
+
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.*;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import java.util.List;
@@ -12,22 +13,63 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Eixos
-        CategoryAxis xAxis = new CategoryAxis();
-        NumberAxis yAxis = new NumberAxis();
-        BarChart<String, Number> barChart = new BarChart<>(xAxis, yAxis);
-
         // Carregar dados
         SisuService service = new SisuService();
         List<Curso> cursos = service.carregarCursos();
 
-        // Gerar gráfico
         MainController controller = new MainController();
-        controller.gerarGraficoMedias(barChart, cursos);
 
-        // Layout
-        VBox root = new VBox(barChart);
-        Scene scene = new Scene(root, 800, 600);
+        // === Gráfico 1: Top 10 Corte (Ampla) ===
+        CategoryAxis xAxis1 = new CategoryAxis();
+        NumberAxis yAxis1 = new NumberAxis();
+        yAxis1.setAutoRanging(false);
+        yAxis1.setLowerBound(0);      // começa em 0
+        yAxis1.setUpperBound(1000);   // termina em 1000
+        yAxis1.setTickUnit(50);       // linhas a cada 50
+        LineChart<String, Number> chartTop10 = new LineChart<>(xAxis1, yAxis1);
+        controller.gerarGraficoTop10NotasCorteAmpla(chartTop10, cursos);
+
+        // === Gráfico 2: Top 10 Notas de Corte (Cotas) ===
+        CategoryAxis xAxis4 = new CategoryAxis();
+        NumberAxis yAxis4 = new NumberAxis();
+        yAxis4.setAutoRanging(false);
+        yAxis4.setLowerBound(0);
+        yAxis4.setUpperBound(1000);
+        yAxis4.setTickUnit(50);
+        LineChart<String, Number> chartCotas = new LineChart<>(xAxis4, yAxis4);
+        controller.gerarGraficoTop10NotasCorteCotas(chartCotas, cursos);
+
+
+        // === Gráfico 3: Distribuição por Campus ===
+        PieChart chartCampus = new PieChart();
+        controller.gerarGraficoCampus(chartCampus, cursos);
+
+        // === Gráfico 4: Ampla vs Cotas (barra) ===
+        CategoryAxis xAxis2 = new CategoryAxis();
+        NumberAxis yAxis2 = new NumberAxis();
+        BarChart<String, Number> chartAmplaCotas = new BarChart<>(xAxis2, yAxis2);
+        controller.gerarGraficoAmplaVsCotasTop10(chartAmplaCotas, cursos);
+
+
+        // Janelas
+        TabPane tabPane = new TabPane();
+
+        Tab tab1 = new Tab("Top 10 Notas de Corte (Ampla)", chartTop10);
+        Tab tab2 = new Tab("Top 10 Notas de Corte (Cotas)", chartCotas);
+        Tab tab3 = new Tab("Distribuição por Campus", chartCampus);
+        Tab tab4 = new Tab("Ampla x Cotas (Top 10 Diferenças)", chartAmplaCotas);
+
+
+
+        tab1.setClosable(false);
+        tab2.setClosable(false);
+        tab3.setClosable(false);
+        tab4.setClosable(false);
+
+        tabPane.getTabs().addAll(tab1, tab2, tab3, tab4);
+
+        VBox root = new VBox(tabPane);
+        Scene scene = new Scene(root, 1000, 700);
 
         primaryStage.setTitle("SISU - Análise Exploratória");
         primaryStage.setScene(scene);
