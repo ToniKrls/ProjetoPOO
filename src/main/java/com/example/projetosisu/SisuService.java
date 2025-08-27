@@ -14,7 +14,6 @@ public class SisuService {
         List<Curso> cursos = new ArrayList<>();
 
         try {
-            // Carrega o arquivo do resources
             InputStream input = getClass().getResourceAsStream("/Aprovados-_2_.csv");
             if (input == null) {
                 throw new RuntimeException("Arquivo não encontrado em resources!");

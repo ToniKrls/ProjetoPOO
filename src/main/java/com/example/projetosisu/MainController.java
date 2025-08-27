@@ -9,8 +9,9 @@ import javafx.scene.control.Tooltip;
 
 public class MainController {
 
-    // 1) Top 10 cursos com maiores médias
-    // Top 10 cursos com maiores notas de corte (apenas Ampla Concorrência)
+    //1) Graficos 1 e 2 - Os 10 cursos com maiores notas de corte (Linhas)
+
+    //(Ampla)
     public void gerarGraficoTop10NotasCorteAmpla(LineChart<String, Number> chart, List<Curso> cursos) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Top 10 - Nota de Corte (Ampla Concorrência)");
@@ -19,14 +20,14 @@ public class MainController {
         List<Map.Entry<String, Double>> notasCorte = cursos.stream()
                 .map(curso -> {
                     double notaCorte = curso.getNotas().stream()
-                            .filter(n -> n.getDemanda().equalsIgnoreCase("AC")) // 🔹 só ampla
+                            .filter(n -> n.getDemanda().equalsIgnoreCase("AC"))
                             .mapToDouble(Nota::getMedia)
                             .min()
                             .orElse(0);
                     return Map.entry(curso.getNome(), notaCorte);
                 })
-                .filter(e -> e.getValue() > 0) // remove cursos sem AC
-                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())) // maiores primeiro
+                .filter(e -> e.getValue() > 0)
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
                 .limit(10)
                 .toList();
 
@@ -37,12 +38,11 @@ public class MainController {
         chart.getData().clear();
         chart.getData().add(series);
 
-        // estilizar a linha azul
         chart.lookup(".default-color0.chart-series-line")
                 .setStyle("-fx-stroke: blue; -fx-stroke-width: 2px;");
     }
 
-    // Top 10 cursos com maiores notas de corte (apenas Cotas)
+    //(Cotas)
     public void gerarGraficoTop10NotasCorteCotas(LineChart<String, Number> chart, List<Curso> cursos) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Top 10 - Nota de Corte (Cotas)");
@@ -51,14 +51,14 @@ public class MainController {
         List<Map.Entry<String, Double>> notasCorte = cursos.stream()
                 .map(curso -> {
                     double notaCorte = curso.getNotas().stream()
-                            .filter(n -> !n.getDemanda().equalsIgnoreCase("AC")) // 🔹 só cotas
+                            .filter(n -> !n.getDemanda().equalsIgnoreCase("AC"))
                             .mapToDouble(Nota::getMedia)
                             .min()
                             .orElse(0);
                     return Map.entry(curso.getNome(), notaCorte);
                 })
-                .filter(e -> e.getValue() > 0) // remove cursos sem cotas
-                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())) // maiores primeiro
+                .filter(e -> e.getValue() > 0)
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
                 .limit(10)
                 .toList();
 
@@ -69,12 +69,12 @@ public class MainController {
         chart.getData().clear();
         chart.getData().add(series);
 
-        // estilizar a linha vermelha
         chart.lookup(".default-color0.chart-series-line")
                 .setStyle("-fx-stroke: red; -fx-stroke-width: 2px;");
     }
 
-    // 2) Gráfico de pizza - distribuição por campus
+    // 2) Gráfico 3 - distribuição por campus (Pizza)
+
     public void gerarGraficoCampus(PieChart chart, List<Curso> cursos) {
         Map<String, Long> contagem = cursos.stream()
                 .collect(Collectors.groupingBy(Curso::getCampus, Collectors.counting()));
@@ -84,16 +84,16 @@ public class MainController {
             chart.getData().add(new PieChart.Data(entry.getKey(), entry.getValue()));
         }
 
-        // 🔹 Adicionar tooltip em cada fatia
         for (PieChart.Data data : chart.getData()) {
             String text = data.getName() + " (" + (int) data.getPieValue() + ")";
             Tooltip.install(data.getNode(), new Tooltip(text));
         }
     }
 
-    // 3) Comparação Ampla Concorrência x Cotas
+    // 3) Comparação Ampla Concorrência x Cotas (Barras)
+
     public void gerarGraficoAmplaVsCotasTop10(BarChart<String, Number> chart, List<Curso> cursos) {
-        // lista com nome do curso e diferença absoluta entre AC e Cotas
+
         List<Map.Entry<Curso, Double>> diffs = cursos.stream()
                 .map(curso -> {
                     List<Double> ampla = curso.getNotas().stream()

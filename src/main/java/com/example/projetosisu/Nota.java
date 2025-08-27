@@ -2,7 +2,7 @@ package com.example.projetosisu;
 
 public class Nota {
     private int ano;
-    private String demanda;   // Ampla concorrência, cotas, etc.
+    private String demanda;
     private double media;
     private int colocacao;
 
