@@ -74,7 +74,7 @@ public class MainController {
     }
 
 
-    // 4) Distribuição Por Campus
+    // 3) Distribuição Por Campus
 
     public void gerarGraficoCampus(PieChart chart, List<Curso> cursos) {
         Map<String, Long> contagem = cursos.stream()
@@ -92,7 +92,7 @@ public class MainController {
     }
 
 
-    // 3) Comparação Ampla Concorrência x Cotas
+    // 4) Comparação Ampla Concorrência x Cotas
 
     public void gerarGraficoAmplaVsCotasTop10(BarChart<String, Number> chart, List<Curso> cursos) {
         List<Map.Entry<Curso, Double>> diffs = cursos.stream()
