@@ -8,7 +8,6 @@ import javafx.scene.control.Tooltip;
 
 public class MainController {
 
-    // 🔹 Conjunto de códigos que significam Ampla Concorrência
     private static final Set<String> DEMANDAS_AMPLA = Set.of("AC", "A0");
 
     // 1) Top 10 cursos com maiores notas de corte (Ampla Concorrência)
@@ -19,7 +18,6 @@ public class MainController {
         List<Map.Entry<String, Double>> notasCorte = cursos.stream()
                 .map(curso -> {
                     double notaCorte = curso.getNotas().stream()
-
                             .filter(n -> DEMANDAS_AMPLA.contains(n.getDemanda().toUpperCase())) // 🔹 AC ou A0
                             .mapToDouble(Nota::getMedia)
                             .min()
@@ -50,7 +48,6 @@ public class MainController {
         List<Map.Entry<String, Double>> notasCorte = cursos.stream()
                 .map(curso -> {
                     double notaCorte = curso.getNotas().stream()
-
                             .filter(n -> !DEMANDAS_AMPLA.contains(n.getDemanda().toUpperCase())) // 🔹 só cotas
                             .mapToDouble(Nota::getMedia)
                             .min()
@@ -73,8 +70,7 @@ public class MainController {
                 .setStyle("-fx-stroke: red; -fx-stroke-width: 2px;");
     }
 
-    // 2) Gráfico 3 - distribuição por campus (Pizza)
-
+    // 2) Gráfico de pizza - distribuição por campus
     public void gerarGraficoCampus(PieChart chart, List<Curso> cursos) {
         Map<String, Long> contagem = cursos.stream()
                 .collect(Collectors.groupingBy(Curso::getCampus, Collectors.counting()));
@@ -90,10 +86,8 @@ public class MainController {
         }
     }
 
-    // 3) Comparação Ampla Concorrência x Cotas (Barras)
-
+    // 3) Comparação Ampla Concorrência x Cotas
     public void gerarGraficoAmplaVsCotasTop10(BarChart<String, Number> chart, List<Curso> cursos) {
-
         List<Map.Entry<Curso, Double>> diffs = cursos.stream()
                 .map(curso -> {
                     List<Double> ampla = curso.getNotas().stream()
