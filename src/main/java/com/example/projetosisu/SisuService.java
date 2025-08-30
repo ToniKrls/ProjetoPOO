@@ -1,10 +1,10 @@
 package com.example.projetosisu;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 
@@ -19,11 +19,13 @@ public class SisuService {
                 throw new RuntimeException("Arquivo não encontrado em resources!");
             }
 
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(input))) {
-                String linha;
+            try (Scanner scanner = new Scanner(new InputStreamReader(input))) {
                 boolean dadosIniciaram = false;
 
-                while ((linha = br.readLine()) != null) {
+                while (scanner.hasNextLine()) {
+                    String linha = scanner.nextLine();
+
+                    // Pula cabeçalho até encontrar títulos
                     if (linha.contains("N. ENEM") && linha.contains("Curso")) {
                         dadosIniciaram = true;
                         continue;
@@ -33,6 +35,7 @@ public class SisuService {
                     }
 
                     try {
+                        // Divide a linha por 2 ou mais espaços
                         String[] colunas = linha.trim().split("\\s{2,}");
                         if (colunas.length < 7) continue;
 
