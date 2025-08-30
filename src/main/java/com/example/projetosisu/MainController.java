@@ -74,7 +74,7 @@ public class MainController {
     }
 
 
-    // 3) Distribuição Por Campus
+    // 4) Distribuição Por Campus
 
     public void gerarGraficoCampus(PieChart chart, List<Curso> cursos) {
         Map<String, Long> contagem = cursos.stream()
