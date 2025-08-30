@@ -6,21 +6,21 @@ import java.util.*;
 import java.util.stream.Collectors;
 import javafx.scene.control.Tooltip;
 
-
 public class MainController {
 
-    //1) Graficos 1 e 2 - Os 10 cursos com maiores notas de corte (Linhas)
+    // 🔹 Conjunto de códigos que significam Ampla Concorrência
+    private static final Set<String> DEMANDAS_AMPLA = Set.of("AC", "A0");
 
-    //(Ampla)
+    // 1) Top 10 cursos com maiores notas de corte (Ampla Concorrência)
     public void gerarGraficoTop10NotasCorteAmpla(LineChart<String, Number> chart, List<Curso> cursos) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Top 10 - Nota de Corte (Ampla Concorrência)");
 
-        // calcular nota de corte apenas para candidatos da ampla concorrência (AC)
         List<Map.Entry<String, Double>> notasCorte = cursos.stream()
                 .map(curso -> {
                     double notaCorte = curso.getNotas().stream()
-                            .filter(n -> n.getDemanda().equalsIgnoreCase("AC"))
+
+                            .filter(n -> DEMANDAS_AMPLA.contains(n.getDemanda().toUpperCase())) // 🔹 AC ou A0
                             .mapToDouble(Nota::getMedia)
                             .min()
                             .orElse(0);
@@ -42,16 +42,16 @@ public class MainController {
                 .setStyle("-fx-stroke: blue; -fx-stroke-width: 2px;");
     }
 
-    //(Cotas)
+    // 1b) Top 10 cursos com maiores notas de corte (Cotas)
     public void gerarGraficoTop10NotasCorteCotas(LineChart<String, Number> chart, List<Curso> cursos) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Top 10 - Nota de Corte (Cotas)");
 
-        // calcular nota de corte apenas para candidatos de cotas (não AC)
         List<Map.Entry<String, Double>> notasCorte = cursos.stream()
                 .map(curso -> {
                     double notaCorte = curso.getNotas().stream()
-                            .filter(n -> !n.getDemanda().equalsIgnoreCase("AC"))
+
+                            .filter(n -> !DEMANDAS_AMPLA.contains(n.getDemanda().toUpperCase())) // 🔹 só cotas
                             .mapToDouble(Nota::getMedia)
                             .min()
                             .orElse(0);
@@ -97,12 +97,12 @@ public class MainController {
         List<Map.Entry<Curso, Double>> diffs = cursos.stream()
                 .map(curso -> {
                     List<Double> ampla = curso.getNotas().stream()
-                            .filter(n -> n.getDemanda().equalsIgnoreCase("AC"))
+                            .filter(n -> DEMANDAS_AMPLA.contains(n.getDemanda().toUpperCase()))
                             .map(Nota::getMedia)
                             .toList();
 
                     List<Double> cotas = curso.getNotas().stream()
-                            .filter(n -> !n.getDemanda().equalsIgnoreCase("AC"))
+                            .filter(n -> !DEMANDAS_AMPLA.contains(n.getDemanda().toUpperCase()))
                             .map(Nota::getMedia)
                             .toList();
 
@@ -112,8 +112,8 @@ public class MainController {
 
                     return Map.entry(curso, diff);
                 })
-                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue())) // maior diferença primeiro
-                .limit(10) // pega só 10 cursos
+                .sorted((a, b) -> Double.compare(b.getValue(), a.getValue()))
+                .limit(10)
                 .toList();
 
         XYChart.Series<String, Number> serieAmpla = new XYChart.Series<>();
@@ -126,12 +126,12 @@ public class MainController {
             Curso curso = entry.getKey();
 
             List<Double> ampla = curso.getNotas().stream()
-                    .filter(n -> n.getDemanda().equalsIgnoreCase("AC"))
+                    .filter(n -> DEMANDAS_AMPLA.contains(n.getDemanda().toUpperCase()))
                     .map(Nota::getMedia)
                     .toList();
 
             List<Double> cotas = curso.getNotas().stream()
-                    .filter(n -> !n.getDemanda().equalsIgnoreCase("AC"))
+                    .filter(n -> !DEMANDAS_AMPLA.contains(n.getDemanda().toUpperCase()))
                     .map(Nota::getMedia)
                     .toList();
 

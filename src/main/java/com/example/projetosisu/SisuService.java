@@ -2,6 +2,8 @@ package com.example.projetosisu;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -10,50 +12,51 @@ import javafx.scene.control.Alert.AlertType;
 
 public class SisuService {
 
-    public List<Curso> carregarCursos() {
+    // Método para carregar arquivo externo selecionado pelo usuário
+    public List<Curso> carregarCursosDeArquivo(File arquivo) {
         List<Curso> cursos = new ArrayList<>();
 
-        try {
-            InputStream input = getClass().getResourceAsStream("/Aprovados-_2_.csv");
-            if (input == null) {
-                throw new RuntimeException("Arquivo não encontrado em resources!");
+        try (FileInputStream fis = new FileInputStream(arquivo);
+             Scanner scanner = new Scanner(fis)) {
+
+            // Verifica se o arquivo está vazio
+            if (!scanner.hasNextLine()) {
+                mostrarAlerta("Arquivo vazio.");
+                return cursos;
             }
 
-            try (Scanner scanner = new Scanner(new InputStreamReader(input))) {
-                boolean dadosIniciaram = false;
+            boolean dadosIniciaram = false;
 
-                while (scanner.hasNextLine()) {
-                    String linha = scanner.nextLine();
+            while (scanner.hasNextLine()) {
+                String linha = scanner.nextLine();
 
-                    // Pula cabeçalho até encontrar títulos
-                    if (linha.contains("N. ENEM") && linha.contains("Curso")) {
-                        dadosIniciaram = true;
-                        continue;
-                    }
-                    if (!dadosIniciaram || linha.trim().isEmpty()) {
-                        continue;
-                    }
+                if (linha.contains("N. ENEM") && linha.contains("Curso")) {
+                    dadosIniciaram = true;
+                    continue;
+                }
+                if (!dadosIniciaram || linha.trim().isEmpty()) {
+                    continue;
+                }
 
-                    try {
-                        // Divide a linha por 2 ou mais espaços
-                        String[] colunas = linha.trim().split("\\s{2,}");
-                        if (colunas.length < 7) continue;
+                try {
+                    String[] colunas = linha.trim().split("\\s{2,}");
+                    if (colunas.length < 7) continue;
 
-                        String cursoNome = colunas[2].trim();
-                        String campus = colunas[3].trim();
-                        String demanda = colunas[4].trim();
-                        double media = Double.parseDouble(colunas[5].replace(",", "."));
-                        int colocacao = Integer.parseInt(colunas[6].replace("º", "").trim());
+                    String cursoNome = colunas[2].trim();
+                    String campus = colunas[3].trim();
+                    String demanda = colunas[4].trim();
+                    double media = Double.parseDouble(colunas[5].replace(",", "."));
+                    int colocacao = Integer.parseInt(colunas[6].replace("º", "").trim());
 
-                        Curso curso = encontrarOuCriar(cursos, cursoNome, campus);
-                        Nota nota = new Nota(2024, demanda, media, colocacao);
-                        curso.adicionarNota(nota);
+                    Curso curso = encontrarOuCriar(cursos, cursoNome, campus);
+                    Nota nota = new Nota(2024, demanda, media, colocacao);
+                    curso.adicionarNota(nota);
 
-                    } catch (Exception e) {
-                        mostrarAlerta("Erro ao processar linha: " + linha);
-                    }
+                } catch (Exception e) {
+                    mostrarAlerta("Erro ao processar linha: " + linha);
                 }
             }
+
         } catch (Exception e) {
             mostrarAlerta("Erro ao ler o arquivo: " + e.getMessage());
             e.printStackTrace();
