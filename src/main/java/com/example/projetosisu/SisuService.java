@@ -10,14 +10,13 @@ import javafx.scene.control.Alert.AlertType;
 
 public class SisuService {
 
-    // Método para carregar arquivo externo selecionado pelo usuário
+    // Carregar Arquivo
     public List<Curso> carregarCursosDeArquivo(File arquivo) {
         List<Curso> cursos = new ArrayList<>();
 
         try (FileInputStream fis = new FileInputStream(arquivo);
              Scanner scanner = new Scanner(fis)) {
 
-            // Verifica se o arquivo está vazio
             if (!scanner.hasNextLine()) {
                 mostrarAlerta("Arquivo vazio.");
                 return cursos;
@@ -63,6 +62,8 @@ public class SisuService {
         return cursos;
     }
 
+
+    // Procura Um Curso Na Lista Ou Cria Um
     private Curso encontrarOuCriar(List<Curso> cursos, String nome, String campus) {
         for (Curso c : cursos) {
             if (c.getNome().equalsIgnoreCase(nome) && c.getCampus().equalsIgnoreCase(campus)) {
@@ -74,6 +75,8 @@ public class SisuService {
         return novo;
     }
 
+
+    // Alerta de Erro
     private void mostrarAlerta(String mensagem) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Erro");

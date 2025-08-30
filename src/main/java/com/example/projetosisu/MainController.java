@@ -10,7 +10,8 @@ public class MainController {
 
     private static final Set<String> DEMANDAS_AMPLA = Set.of("AC", "A0");
 
-    // 1) Top 10 cursos com maiores notas de corte (Ampla Concorrência)
+    // 1) Top 10 Cursos Com Maiores Notas De Corte (Ampla Concorrência)
+
     public void gerarGraficoTop10NotasCorteAmpla(LineChart<String, Number> chart, List<Curso> cursos) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Top 10 - Nota de Corte (Ampla Concorrência)");
@@ -40,7 +41,9 @@ public class MainController {
                 .setStyle("-fx-stroke: blue; -fx-stroke-width: 2px;");
     }
 
-    // 1b) Top 10 cursos com maiores notas de corte (Cotas)
+
+    // 2) Top 10 Cursos Com Maiores Notas De Corte (Cotas)
+
     public void gerarGraficoTop10NotasCorteCotas(LineChart<String, Number> chart, List<Curso> cursos) {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Top 10 - Nota de Corte (Cotas)");
@@ -70,7 +73,9 @@ public class MainController {
                 .setStyle("-fx-stroke: red; -fx-stroke-width: 2px;");
     }
 
-    // 2) Gráfico de pizza - distribuição por campus
+
+    // 3) Distribuição Por Campus
+
     public void gerarGraficoCampus(PieChart chart, List<Curso> cursos) {
         Map<String, Long> contagem = cursos.stream()
                 .collect(Collectors.groupingBy(Curso::getCampus, Collectors.counting()));
@@ -86,7 +91,9 @@ public class MainController {
         }
     }
 
+
     // 3) Comparação Ampla Concorrência x Cotas
+
     public void gerarGraficoAmplaVsCotasTop10(BarChart<String, Number> chart, List<Curso> cursos) {
         List<Map.Entry<Curso, Double>> diffs = cursos.stream()
                 .map(curso -> {

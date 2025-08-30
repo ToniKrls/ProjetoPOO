@@ -34,14 +34,12 @@ public class Main extends Application {
             primaryStage.close();
             return;
         }
-
-        // Carregar dados do arquivo selecionado
         SisuService service = new SisuService();
         List<Curso> cursos = service.carregarCursosDeArquivo(selectedFile);
 
         MainController controller = new MainController();
 
-        // === Gráfico 1: Top 10 Corte (Ampla) ===
+        // Gráfico 1: Top 10 Corte (Ampla)
         CategoryAxis xAxis1 = new CategoryAxis();
         NumberAxis yAxis1 = new NumberAxis();
         yAxis1.setAutoRanging(false);
@@ -51,7 +49,7 @@ public class Main extends Application {
         LineChart<String, Number> chartTop10 = new LineChart<>(xAxis1, yAxis1);
         controller.gerarGraficoTop10NotasCorteAmpla(chartTop10, cursos);
 
-        // === Gráfico 2: Top 10 Notas de Corte (Cotas) ===
+        // Gráfico 2: Top 10 Notas de Corte (Cotas)
         CategoryAxis xAxis4 = new CategoryAxis();
         NumberAxis yAxis4 = new NumberAxis();
         yAxis4.setAutoRanging(false);
@@ -61,17 +59,17 @@ public class Main extends Application {
         LineChart<String, Number> chartCotas = new LineChart<>(xAxis4, yAxis4);
         controller.gerarGraficoTop10NotasCorteCotas(chartCotas, cursos);
 
-        // === Gráfico 3: Distribuição por Campus ===
+        // Gráfico 3: Distribuição por Campus
         PieChart chartCampus = new PieChart();
         controller.gerarGraficoCampus(chartCampus, cursos);
 
-        // === Gráfico 4: Ampla vs Cotas (barra) ===
+        // Gráfico 4: Ampla vs Cotas
         CategoryAxis xAxis2 = new CategoryAxis();
         NumberAxis yAxis2 = new NumberAxis();
         BarChart<String, Number> chartAmplaCotas = new BarChart<>(xAxis2, yAxis2);
         controller.gerarGraficoAmplaVsCotasTop10(chartAmplaCotas, cursos);
 
-        // Configurar abas
+        // Configurar Abas
         TabPane tabPane = new TabPane();
 
         Tab tab1 = new Tab("Top 10 Notas de Corte (Ampla)", chartTop10);
