@@ -3,19 +3,44 @@ package com.example.projetosisu;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+
+import java.io.File;
 import java.util.List;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Carregar dados
+        // Abrir diálogo para escolher arquivo CSV
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Selecione o arquivo de dados");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Arquivos CSV", "*.csv"),
+                new FileChooser.ExtensionFilter("Todos os Arquivos", "*.*")
+        );
+        File selectedFile = fileChooser.showOpenDialog(primaryStage);
+
+        if (selectedFile == null) {
+            // Usuário não selecionou arquivo: mostrar erro e encerrar
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Arquivo não selecionado");
+            alert.setHeaderText(null);
+            alert.setContentText("Você deve selecionar um arquivo para continuar.");
+            alert.showAndWait();
+            primaryStage.close();
+            return;
+        }
+
+        // Carregar dados do arquivo selecionado
         SisuService service = new SisuService();
-        List<Curso> cursos = service.carregarCursos();
+        List<Curso> cursos = service.carregarCursosDeArquivo(selectedFile);
 
         MainController controller = new MainController();
 
@@ -23,9 +48,9 @@ public class Main extends Application {
         CategoryAxis xAxis1 = new CategoryAxis();
         NumberAxis yAxis1 = new NumberAxis();
         yAxis1.setAutoRanging(false);
-        yAxis1.setLowerBound(0);      // começa em 0
-        yAxis1.setUpperBound(1000);   // termina em 1000
-        yAxis1.setTickUnit(50);       // linhas a cada 50
+        yAxis1.setLowerBound(0);
+        yAxis1.setUpperBound(1000);
+        yAxis1.setTickUnit(50);
         LineChart<String, Number> chartTop10 = new LineChart<>(xAxis1, yAxis1);
         controller.gerarGraficoTop10NotasCorteAmpla(chartTop10, cursos);
 
@@ -39,7 +64,6 @@ public class Main extends Application {
         LineChart<String, Number> chartCotas = new LineChart<>(xAxis4, yAxis4);
         controller.gerarGraficoTop10NotasCorteCotas(chartCotas, cursos);
 
-
         // === Gráfico 3: Distribuição por Campus ===
         PieChart chartCampus = new PieChart();
         controller.gerarGraficoCampus(chartCampus, cursos);
@@ -50,16 +74,13 @@ public class Main extends Application {
         BarChart<String, Number> chartAmplaCotas = new BarChart<>(xAxis2, yAxis2);
         controller.gerarGraficoAmplaVsCotasTop10(chartAmplaCotas, cursos);
 
-
-        // Janelas
+        // Configurar abas
         TabPane tabPane = new TabPane();
 
         Tab tab1 = new Tab("Top 10 Notas de Corte (Ampla)", chartTop10);
         Tab tab2 = new Tab("Top 10 Notas de Corte (Cotas)", chartCotas);
         Tab tab3 = new Tab("Distribuição por Campus", chartCampus);
         Tab tab4 = new Tab("Ampla x Cotas (Top 10 Diferenças)", chartAmplaCotas);
-
-
 
         tab1.setClosable(false);
         tab2.setClosable(false);
