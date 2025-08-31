@@ -38,6 +38,6 @@ Gráfico de barras comparando os 10 cursos em que a nota de corte entre ampla e 
 
 2- Abra o projeto na sua IDE
 
-3- Compile e execute a classe Main
+3- Compile e execute a classe Main (que está em src/main/java)
 
-4- Selecione um arquivo CSV válido quando a aplicação pedir (Dentro da pasta "Resources" se encontram dois arquivos CSV para uso)
+4- Selecione um arquivo CSV válido quando a aplicação pedir (dentro da pasta "Resources" se encontram dois arquivos CSV para uso)
