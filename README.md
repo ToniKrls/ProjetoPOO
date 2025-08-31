@@ -31,7 +31,7 @@ Gráfico de barras comparando os 10 cursos em que a nota de corte entre ampla e 
 
 
 
--> Como Executar o Projeto
+-> Como Executar o Projeto JAVA
 
 1- Clone o repositório:
    git clone https://github.com/ToniKrls/ProjetoPOO.git
