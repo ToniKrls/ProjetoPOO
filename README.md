@@ -53,9 +53,11 @@ Em conclusão, ambas as linguagens permitem implementar programas orientados a o
 
 2- Abra o projeto na sua IDE
 
-3- Compile e execute a classe Main (que está em src/main/java)
+3- Certifique-se de que o JavaFX está configurado corretamente na sua IDE
 
-4- Selecione um arquivo CSV válido quando a aplicação pedir (dentro da pasta "Resources" se encontram dois arquivos CSV para uso)
+4- Compile e execute a classe Main (que está em src/main/java)
+
+5- Selecione um arquivo CSV válido quando a aplicação pedir (dentro da pasta "Resources" se encontram dois arquivos CSV para uso)
 
 
 -> Como Executar o Projeto Python
