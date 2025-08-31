@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import ttk, filedialog, messagebox
 from .SisuService import SisuService
 
 class Main(tk.Tk):
@@ -11,18 +11,16 @@ class Main(tk.Tk):
         self._setup_ui()
 
     def _setup_ui(self):
-        # Frame para botão de carregamento
+       
         self.frame_top = tk.Frame(self)
         self.frame_top.pack(fill="x", padx=10, pady=10)
         
         self.btn_carregar = tk.Button(self.frame_top, text="Carregar Arquivo CSV", command=self._carregar_arquivo)
         self.btn_carregar.pack()
-        
-        # Notebook para os gráficos
+               
         self.notebook = ttk.Notebook(self)
         self.notebook.pack(expand=True, fill="both")
-
-        # Criação de abas e canvas
+        
         self.canvas_top10_ampla = tk.Canvas(self.notebook, width=900, height=520, bg="white")
         self.canvas_top10_cotas = tk.Canvas(self.notebook, width=900, height=520, bg="white")
         self.canvas_campus = tk.Canvas(self.notebook, width=900, height=520, bg="white")
@@ -34,16 +32,27 @@ class Main(tk.Tk):
         self.notebook.add(self.canvas_ampla_vs_cotas, text="Ampla x Cotas")
 
     def _carregar_arquivo(self):
-        caminho_arquivo = filedialog.askopenfilename(
-            title="Selecione o arquivo CSV",
-            filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
-        )
-        
-        if caminho_arquivo:
+        try:
+            caminho_arquivo = filedialog.askopenfilename(
+                title="Selecione o arquivo CSV",
+                filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
+            )
+            
+            if not caminho_arquivo:
+                return
+            
             service = SisuService()
             self.cursos = service.carregarCursos(caminho_arquivo)
+            
+            if not self.cursos:
+                messagebox.showerror("Erro", "Nenhum dado válido encontrado no arquivo CSV.")
+                return
+                
             self._desenhar_graficos()
             self.title(f"SISU - Análise Exploratória - {caminho_arquivo}")
+            
+        except Exception as e:
+            messagebox.showerror("Erro", f"Ocorreu um erro ao carregar o arquivo:\n{str(e)}")
 
     def _desenhar_graficos(self):
         self.gerar_grafico_top10_ampla(self.canvas_top10_ampla)
@@ -94,18 +103,20 @@ class Main(tk.Tk):
         altura = 450
         margem = 80
 
-        max_y = max([d[1] for d in dados]) * 1.1  # 10% de margem no topo
-        min_y = min([d[1] for d in dados]) * 0.9  # 10% de margem na base
+        min_y = 0
+        max_y = 1000
         
         escala_y = (altura - margem*2) / (max_y - min_y)
         passo_x = (largura - margem*2) / (len(dados)-1)
-
-        # Eixo Y
+       
         canvas.create_line(margem, margem, margem, altura-margem, width=2)
-        # Eixo X
+        for i in range(0, 1001, 100):  
+            y = altura - margem - (i - min_y) * escala_y
+            canvas.create_line(margem-5, y, margem, y, width=1)
+            canvas.create_text(margem-10, y, text=f"{i}", anchor="e", font=("Arial", 8))
+        
         canvas.create_line(margem, altura-margem, largura-margem, altura-margem, width=2)
 
-        # Pontos e linhas
         pontos = []
         for i, (nome, nota) in enumerate(dados):
             x = margem + i * passo_x
@@ -114,14 +125,11 @@ class Main(tk.Tk):
             
             canvas.create_oval(x-3, y-3, x+3, y+3, fill=cor, outline=cor)
             
-            # Nome do curso (abreviado se necessário)
             nome_abreviado = nome[:15] + "..." if len(nome) > 15 else nome
             canvas.create_text(x, altura-margem+15, text=nome_abreviado, font=("Arial", 8), angle=45, anchor="ne")
-            
-            # Valor da nota
+                        
             canvas.create_text(x, y-15, text=f"{nota:.1f}", font=("Arial", 8))
 
-        # Linha conectando os pontos
         for i in range(1, len(pontos)):
             canvas.create_line(pontos[i-1][0], pontos[i-1][1], pontos[i][0], pontos[i][1], fill=cor, width=2)
 
@@ -141,7 +149,6 @@ class Main(tk.Tk):
             canvas.create_text(200, 100, text="Sem dados")
             return
         
-        # Cores para o gráfico de pizza
         cores = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "brown", "gray", "cyan"]
         
         x = 400
@@ -156,7 +163,6 @@ class Main(tk.Tk):
             canvas.create_arc(x-r, y-r, x+r, y+r, start=ang_inicial, extent=fracao*360,
                           fill=cores[i % len(cores)], outline="black")
             
-            # Legenda
             canvas.create_rectangle(600, 100 + i*30, 620, 120 + i*30, fill=cores[i % len(cores)])
             canvas.create_text(640, 110 + i*30, text=f"{campus} ({qtd})", anchor="w")
             
@@ -191,11 +197,19 @@ class Main(tk.Tk):
         margem = 80
         largura_barra = 30
 
-        max_y = max([max(a, c) for n, a, c, d in diffs]) * 1.1
-        min_y = min([min(a, c) for n, a, c, d in diffs]) * 0.9
+        min_y = 0
+        max_y = 1000
         
         escala_y = (altura-margem*2)/(max_y-min_y)
         passo_x = (largura-margem*2)/len(diffs)
+
+        canvas.create_line(margem, margem, margem, altura-margem, width=2)
+        for i in range(0, 1001, 100):  
+            y = altura - margem - (i - min_y) * escala_y
+            canvas.create_line(margem-5, y, margem, y, width=1)
+            canvas.create_text(margem-10, y, text=f"{i}", anchor="e", font=("Arial", 8))
+               
+        canvas.create_line(margem, altura-margem, largura-margem, altura-margem, width=2)
 
         for i, (nome, ampla, cotas, diff) in enumerate(diffs):
             x = margem + i*passo_x + passo_x/2
@@ -206,15 +220,16 @@ class Main(tk.Tk):
             canvas.create_rectangle(x-largura_barra/2, y_ampla, x, altura-margem, fill="blue", outline="blue")
             canvas.create_rectangle(x, y_cotas, x+largura_barra/2, altura-margem, fill="red", outline="red")
 
-            # Nome do curso (abreviado)
+            canvas.create_text(x-largura_barra/4, y_ampla-15, text=f"{ampla:.1f}", font=("Arial", 8), fill="blue")
+            canvas.create_text(x+largura_barra/4, y_cotas-15, text=f"{cotas:.1f}", font=("Arial", 8), fill="red")
+
             nome_abreviado = nome[:15] + "..." if len(nome) > 15 else nome
             canvas.create_text(x, altura-margem+15, text=nome_abreviado, font=("Arial", 8), angle=45, anchor="ne")
 
-        # Legenda
-        canvas.create_rectangle(600, 100, 620, 120, fill="blue")
-        canvas.create_text(640, 110, text="Ampla Concorrência", anchor="w")
-        canvas.create_rectangle(600, 140, 620, 160, fill="red")
-        canvas.create_text(640, 150, text="Cotas", anchor="w")
+        canvas.create_rectangle(600, 80, 620, 100, fill="blue")
+        canvas.create_text(640, 90, text="Ampla Concorrência", anchor="w")
+        canvas.create_rectangle(600, 110, 620, 130, fill="red")
+        canvas.create_text(640, 120, text="Cotas", anchor="w")
 
         canvas.create_text(largura//2, 20, text="Ampla vs Cotas (Top 10 Diferenças)",
                            font=("Arial", 12, "bold"))
