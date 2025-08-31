@@ -34,6 +34,7 @@ Gráfico de barras comparando os 10 cursos em que a nota de corte entre ampla e 
 -> Como Executar o Projeto
 
 1- Clone o repositório:
+   git clone https://github.com/ToniKrls/ProjetoPOO.git
 
 2- Abra o projeto na sua IDE
 
