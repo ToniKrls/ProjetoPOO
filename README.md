@@ -51,7 +51,7 @@ Em conclusão, ambas as linguagens permitem implementar programas orientados a o
 1- Clone o repositório:
    git clone https://github.com/ToniKrls/ProjetoPOO.git
 
-2- Abra o projeto na sua IDE
+2- Abra o projeto na sua IDE ou no prompt de comando
 
 3- Certifique-se de que o JavaFX está configurado corretamente na sua IDE
 
